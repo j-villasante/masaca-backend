@@ -31,11 +31,12 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:1.7.30")
 
     // Database
-    val exposedVersion = "0.24.1"
+    val exposedVersion = "0.25.1"
     implementation("org.jetbrains.exposed", "exposed-core", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-dao", exposedVersion)
     implementation("org.jetbrains.exposed", "exposed-jdbc", exposedVersion)
     implementation("org.postgresql", "postgresql", "42.2.14")
+    implementation("com.zaxxer", "HikariCP", "3.4.5")
 
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
