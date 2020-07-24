@@ -1,3 +1,7 @@
 package masaca.backend.domain
 
-class Recipe
+data class Recipe(
+    val id: Int? = null,
+    var name: String,
+    var ingredients: ArrayList<Ingredient>
+)

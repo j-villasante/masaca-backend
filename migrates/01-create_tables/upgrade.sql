@@ -31,4 +31,9 @@ CREATE TABLE masaca.ingredient (
         REFERENCES masaca.recipe(id)
 );
 
+GRANT USAGE ON SCHEMA masaca TO masaca_api;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA masaca TO masaca_api;
+GRANT SELECT, INSERT ON masaca.recipe TO masaca_api;
+GRANT SELECT, INSERT ON masaca.ingredient TO masaca_api;
+
 COMMIT;

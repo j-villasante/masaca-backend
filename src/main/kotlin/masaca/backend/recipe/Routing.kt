@@ -1,15 +1,20 @@
 package masaca.backend.recipe
 
 import io.ktor.application.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import masaca.backend.*
 
 
 fun Routing.recipe() {
     route("/recipe") {
-        get("/") {
-            call.respond(Database.executeQuery("select 2 as test").toString())
+        post("/") {
+            val recipe = UseCase.createRecipe(call.receive())
+            call.respond(recipe)
+        }
+        get("/{recipe_id}") {
+            val recipeId = call.parameters["recipe_id"] ?: throw Exception("invalid recipe id")
+            call.respond(UseCase.getRecipe(recipeId.toInt()))
         }
     }
 }
