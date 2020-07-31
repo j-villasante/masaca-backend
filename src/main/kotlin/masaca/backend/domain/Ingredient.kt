@@ -7,7 +7,7 @@ import java.math.*
 data class Ingredient (
     val id: Int? = null,
     var name: String,
-    var amount: BigDecimal,
+    var amount: Int,
     var percentage: BigDecimal,
     var cost: BigDecimal,
     var typeId: Int,

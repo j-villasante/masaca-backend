@@ -12,13 +12,16 @@ INSERT INTO masaca.ingredient_type (id, name) VALUES (4, 'LEVAIN');
 CREATE TABLE masaca.recipe (
     id SERIAL PRIMARY KEY,
     name VARCHAR NOT NULL,
+    target INTEGER NOT NULL,
+    starter INTEGER,
+    levain_hydration INTEGER,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 CREATE TABLE masaca.ingredient (
     id SERIAL PRIMARY KEY,
     name VARCHAR NOT NULL,
-    amount NUMERIC (6, 2),
+    amount INTEGER,
     percentage NUMERIC (6, 2),
     cost NUMERIC (6, 2),
     type_id SMALLINT NOT NULL,

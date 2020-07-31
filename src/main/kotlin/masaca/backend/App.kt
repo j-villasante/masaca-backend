@@ -5,21 +5,18 @@ import io.ktor.features.*
 import io.ktor.jackson.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
 import masaca.backend.recipe.*
 
-fun main() {
-    val server = embeddedServer(Netty, 8080) {
-        install(ContentNegotiation) {
-            jackson {}
-        }
-        routing {
-            get("/health") {
-                call.respondText("OK")
-            }
-            recipe()
-        }
+fun Application.main() {
+    Config.setup(environment.config)
+
+    install(ContentNegotiation) {
+        jackson {}
     }
-    server.start(wait = true)
+    routing {
+        get("/health") {
+            call.respondText("OK")
+        }
+        recipe()
+    }
 }

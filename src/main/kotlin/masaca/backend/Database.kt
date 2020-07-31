@@ -9,9 +9,9 @@ object Database {
 
     init {
         val config = HikariConfig()
-        config.jdbcUrl = "jdbc:postgresql://localhost/masaca"
-        config.username = "masaca_api"
-        config.password = "masaca"
+        config.jdbcUrl = Config.databaseConfig.url
+        config.username = Config.databaseConfig.username
+        config.password = Config.databaseConfig.password
         this.dataSource = HikariDataSource(config)
     }
 

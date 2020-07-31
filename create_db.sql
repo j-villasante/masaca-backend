@@ -6,12 +6,12 @@ CREATE ROLE masaca WITH
 CREATE USER masaca_adm WITH
     NOSUPERUSER
     NOCREATEDB
-    PASSWORD 'masaca'
+    PASSWORD 'A4QTyd4ACeC0&1J@QU71'
     IN ROLE masaca;
 CREATE USER masaca_api WITH
     NOSUPERUSER
     NOCREATEDB
-    PASSWORD 'masaca'
+    PASSWORD 'S+95VdTi93L$LO030IeV'
     IN ROLE masaca;
 
 -- db

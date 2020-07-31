@@ -6,9 +6,13 @@ import java.sql.*
 class Repository(private val connection: Connection) {
     fun createRecipe(recipe: Recipe): Int {
         val recipeId = connection.prepareStatement(
-            "INSERT INTO masaca.recipe (name) VALUES (?) RETURNING id"
+            "INSERT INTO masaca.recipe (name, target, starter, levain_hydration) VALUES (?, ?, ?, ?) RETURNING id"
         ).apply {
             setString(1, recipe.name)
+            setInt(2, recipe.target)
+            setObject(3, recipe.starter, Types.INTEGER)
+            setObject(4, recipe.levainHydration, Types.INTEGER)
+            recipe.levainHydration?.let { setInt(4, it) }
         }.executeQuery().let {
             it.next()
             it.getInt(1)
@@ -19,7 +23,7 @@ class Repository(private val connection: Connection) {
                 "INSERT INTO masaca.ingredient (name, amount, percentage, cost, type_id, recipe_id) VALUES (?, ?, ?, ?, ?, ?)"
             ).apply {
                 setString(1, ingredient.name)
-                setBigDecimal(2, ingredient.amount)
+                setInt(2, ingredient.amount)
                 setBigDecimal(3, ingredient.percentage)
                 setBigDecimal(4, ingredient.cost)
                 setInt(5, ingredient.typeId)
@@ -31,12 +35,19 @@ class Repository(private val connection: Connection) {
 
     fun getRecipe(recipeId: Int): Recipe {
         val recipe = connection.prepareStatement(
-            "SELECT r.name FROM masaca.recipe r WHERE r.id = ?"
+            "SELECT r.name, r.target, r.starter, r.levain_hydration FROM masaca.recipe r WHERE r.id = ?"
         ).apply {
             setInt(1, recipeId)
         }.executeQuery().let {
             if (it.next())
-                Recipe(recipeId, it.getString(1), ArrayList())
+                Recipe(
+                    recipeId,
+                    it.getString(1),
+                    it.getInt(2),
+                    it.getInt(3),
+                    it.getInt(4),
+                    ArrayList()
+                )
             else
                 null
         }
@@ -52,7 +63,7 @@ class Repository(private val connection: Connection) {
                     Ingredient(
                         id = it.getInt("id"),
                         name = it.getString("name"),
-                        amount = it.getBigDecimal("amount"),
+                        amount = it.getInt("amount"),
                         percentage = it.getBigDecimal("percentage"),
                         cost = it.getBigDecimal("cost"),
                         typeId = it.getInt("type_id"),

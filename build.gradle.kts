@@ -45,5 +45,5 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClassName = "masaca.backend.AppKt"
+    mainClassName = "io.ktor.server.netty.EngineMain"
 }
