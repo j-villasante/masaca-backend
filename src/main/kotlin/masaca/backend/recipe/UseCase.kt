@@ -32,4 +32,9 @@ object UseCase{
             Repository(it).getRecipe(recipeId)
         }
     }
+    fun listRecipes(): ArrayList<Recipe> {
+        return Database.doQuery {
+            Repository(it).listRecipe()
+        }
+    }
 }

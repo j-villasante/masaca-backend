@@ -74,4 +74,23 @@ class Repository(private val connection: Connection) {
         }
         return recipe
     }
+
+    fun listRecipe(): ArrayList<Recipe> {
+        val recipes = ArrayList<Recipe>()
+        connection.createStatement().executeQuery(
+            "SELECT id, name, target  FROM masaca.recipe"
+        ).let {
+            while (it.next()) {
+                recipes.add(
+                    Recipe(
+                        it.getInt(1),
+                        it.getString(2),
+                        it.getInt(3),
+                        ingredients = ArrayList()
+                    )
+                )
+            }
+        }
+        return recipes;
+    }
 }

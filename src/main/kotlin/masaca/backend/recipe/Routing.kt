@@ -16,5 +16,8 @@ fun Routing.recipe() {
             val recipeId = call.parameters["recipe_id"] ?: throw Exception("invalid recipe id")
             call.respond(UseCase.getRecipe(recipeId.toInt()))
         }
+        get("/") {
+            call.respond(UseCase.listRecipes())
+        }
     }
 }
