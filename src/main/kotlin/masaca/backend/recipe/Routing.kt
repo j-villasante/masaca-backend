@@ -4,6 +4,7 @@ import io.ktor.application.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import masaca.backend.error.*
 
 
 fun Routing.recipe() {
@@ -13,7 +14,7 @@ fun Routing.recipe() {
             call.respond(recipe)
         }
         get("/{recipe_id}") {
-            val recipeId = call.parameters["recipe_id"] ?: throw Exception("invalid recipe id")
+            val recipeId = call.parameters["recipe_id"] ?: throw MasacaInvalidParameterError("invalid recipe id")
             call.respond(UseCase.getRecipe(recipeId.toInt()))
         }
         get("/") {

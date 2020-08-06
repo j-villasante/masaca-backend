@@ -1,4 +1,4 @@
-package masaca.backend.domain
+package masaca.backend.domain.recipe
 
 import com.fasterxml.jackson.annotation.*
 import java.math.*
@@ -10,12 +10,6 @@ data class Ingredient (
     var amount: Int,
     var percentage: BigDecimal,
     var cost: BigDecimal,
-    var typeId: Int,
+    var type: IngredientType,
     val recipeId: Int? = null
-) {
-    var type: IngredientType
-        get() = IngredientType.getById(this.typeId)
-        set(value) {
-            this.typeId = value.id
-        }
-}
+)

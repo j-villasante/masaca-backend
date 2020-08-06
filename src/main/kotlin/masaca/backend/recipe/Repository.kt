@@ -1,7 +1,9 @@
 package masaca.backend.recipe
 
-import masaca.backend.domain.*
+import masaca.backend.domain.recipe.*
+import masaca.backend.error.*
 import java.sql.*
+import java.time.*
 
 class Repository(private val connection: Connection) {
     fun createRecipe(recipe: Recipe): Int {
@@ -26,7 +28,7 @@ class Repository(private val connection: Connection) {
                 setInt(2, ingredient.amount)
                 setBigDecimal(3, ingredient.percentage)
                 setBigDecimal(4, ingredient.cost)
-                setInt(5, ingredient.typeId)
+                setInt(5, ingredient.type.id)
                 setInt(6, recipeId)
             }.executeUpdate()
         }
@@ -35,7 +37,7 @@ class Repository(private val connection: Connection) {
 
     fun getRecipe(recipeId: Int): Recipe {
         val recipe = connection.prepareStatement(
-            "SELECT r.name, r.target, r.starter, r.levain_hydration FROM masaca.recipe r WHERE r.id = ?"
+            "SELECT r.name, r.target, r.starter, r.levain_hydration, r.created_at FROM masaca.recipe r WHERE r.id = ?"
         ).apply {
             setInt(1, recipeId)
         }.executeQuery().let {
@@ -46,27 +48,28 @@ class Repository(private val connection: Connection) {
                     it.getInt(2),
                     it.getInt(3),
                     it.getInt(4),
+                    it.getObject(5, OffsetDateTime::class.java),
                     ArrayList()
                 )
             else
                 null
         }
-            ?: throw Exception("Recipe does not exist")
+            ?: throw MasacaNotFoundError("Recipe does not exist")
 
         connection.prepareStatement(
-            "SELECT i.id, i.name, i.amount, i.percentage, i.cost, i.type_id FROM masaca.ingredient i WHERE i.recipe_id = ?"
+            "SELECT i.id, i.name, i.amount, i.percentage, i.cost, it.name FROM masaca.ingredient i INNER JOIN masaca.ingredient_type it ON i.type_id = it.id WHERE i.recipe_id = ?"
         ).apply {
             setInt(1, recipeId)
         }.executeQuery().let {
             while (it.next()) {
                 recipe.ingredients.add(
                     Ingredient(
-                        id = it.getInt("id"),
-                        name = it.getString("name"),
-                        amount = it.getInt("amount"),
-                        percentage = it.getBigDecimal("percentage"),
-                        cost = it.getBigDecimal("cost"),
-                        typeId = it.getInt("type_id"),
+                        id = it.getInt(1),
+                        name = it.getString(2),
+                        amount = it.getInt(3),
+                        percentage = it.getBigDecimal(4),
+                        cost = it.getBigDecimal(5),
+                        type = IngredientType.valueOf(it.getString(6)),
                         recipeId = recipeId
                     )
                 )
@@ -78,7 +81,7 @@ class Repository(private val connection: Connection) {
     fun listRecipe(): ArrayList<Recipe> {
         val recipes = ArrayList<Recipe>()
         connection.createStatement().executeQuery(
-            "SELECT id, name, target  FROM masaca.recipe"
+            "SELECT id, name, target, created_at  FROM masaca.recipe"
         ).let {
             while (it.next()) {
                 recipes.add(
@@ -86,11 +89,12 @@ class Repository(private val connection: Connection) {
                         it.getInt(1),
                         it.getString(2),
                         it.getInt(3),
+                        created_at = it.getObject(4, OffsetDateTime::class.java),
                         ingredients = ArrayList()
                     )
                 )
             }
         }
-        return recipes;
+        return recipes
     }
 }

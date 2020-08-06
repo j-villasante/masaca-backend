@@ -30,6 +30,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
     implementation("org.slf4j:slf4j-simple:1.7.30")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.2")
 
     // Database
     val exposedVersion = "0.25.1"
