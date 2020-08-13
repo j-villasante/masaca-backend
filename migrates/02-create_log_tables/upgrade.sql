@@ -1,8 +1,5 @@
 BEGIN;
 
-ALTER TABLE masaca.ingredient_type
-    ADD UNIQUE (name);
-
 CREATE TABLE masaca.procedure
 (
     id         SERIAL PRIMARY KEY,
@@ -26,19 +23,21 @@ VALUES (2, 'AUTOLYSIS');
 INSERT INTO masaca.procedure_step (id, name)
 VALUES (3, 'BULK_FERMENTATION');
 INSERT INTO masaca.procedure_step (id, name)
-VALUES (4, 'PRE_SHAPE');
+VALUES (4, 'STRETCH_AND_FOLD');
 INSERT INTO masaca.procedure_step (id, name)
-VALUES (5, 'SHAPE');
+VALUES (5, 'PRE_SHAPE');
 INSERT INTO masaca.procedure_step (id, name)
-VALUES (6, 'COUNTER_PROOF');
+VALUES (6, 'SHAPE');
 INSERT INTO masaca.procedure_step (id, name)
-VALUES (7, 'COLD_PROOF');
+VALUES (7, 'COUNTER_PROOF');
 INSERT INTO masaca.procedure_step (id, name)
-VALUES (8, 'STEAM_BAKE');
+VALUES (8, 'COLD_PROOF');
+INSERT InTO masaca.procedure_step (id, name)
+VALUES (9, 'STEAM_BAKE');
 INSERT INTO masaca.procedure_step (id, name)
-VALUES (9, 'DRY_BAKE');
+VALUES (10, 'DRY_BAKE');
 INSERT INTO masaca.procedure_step (id, name)
-VALUES (10, 'OTHER');
+VALUES (11, 'OTHER');
 
 CREATE TABLE masaca.procedure_step_log
 (
@@ -72,5 +71,28 @@ GRANT SELECT, INSERT ON masaca.procedure TO masaca_api;
 GRANT SELECT ON masaca.procedure_step TO masaca_api;
 GRANT SELECT, INSERT ON masaca.procedure_temperature_log TO masaca_api;
 GRANT SELECT, INSERT ON masaca.procedure_step_log TO masaca_api;
+
+ALTER TABLE masaca.ingredient_type
+    ADD UNIQUE (name);
+
+ALTER TABLE masaca.ingredient
+    ADD COLUMN number INTEGER;
+
+WITH a AS (
+    SELECT id,
+           row_number()
+           OVER (PARTITION BY recipe_id ORDER BY id) AS number
+    FROM masaca.ingredient
+)
+UPDATE masaca.ingredient i
+SET number = a.number
+FROM a
+WHERE a.id = i.id;
+
+ALTER TABLE masaca.ingredient
+    ALTER COLUMN number SET NOT NULL;
+
+ALTER TABLE masaca.ingredient
+    ADD UNIQUE (number, recipe_id);
 
 COMMIT;

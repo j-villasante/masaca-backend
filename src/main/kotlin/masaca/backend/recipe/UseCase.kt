@@ -10,13 +10,14 @@ object UseCase {
             target = request.target,
             starter = request.starter,
             levainHydration = request.levainHydration,
-            ingredients = request.ingredients.map {
+            ingredients = request.ingredients.mapIndexed { index, item ->
                 Ingredient(
-                    name = it.name,
-                    amount = it.amount,
-                    percentage = it.percentage,
-                    cost = it.cost,
-                    type = IngredientType.valueOf(it.type)
+                    name = item.name,
+                    amount = item.amount,
+                    percentage = item.percentage,
+                    cost = item.cost,
+                    type = IngredientType.valueOf(item.type),
+                    number = index
                 )
             } as ArrayList<Ingredient>
         )

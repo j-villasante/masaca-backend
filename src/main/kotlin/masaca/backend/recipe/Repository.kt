@@ -22,7 +22,7 @@ class Repository(private val connection: Connection) {
 
         for (ingredient in recipe.ingredients) {
             connection.prepareStatement(
-                "INSERT INTO masaca.ingredient (name, amount, percentage, cost, type_id, recipe_id) VALUES (?, ?, ?, ?, ?, ?)"
+                "INSERT INTO masaca.ingredient (name, amount, percentage, cost, type_id, recipe_id, number) VALUES (?, ?, ?, ?, ?, ?, ?)"
             ).apply {
                 setString(1, ingredient.name)
                 setInt(2, ingredient.amount)
@@ -30,6 +30,7 @@ class Repository(private val connection: Connection) {
                 setBigDecimal(4, ingredient.cost)
                 setInt(5, ingredient.type.id)
                 setInt(6, recipeId)
+                setInt(7, ingredient.number)
             }.executeUpdate()
         }
         return recipeId
@@ -57,7 +58,7 @@ class Repository(private val connection: Connection) {
             ?: throw MasacaNotFoundError("Recipe does not exist")
 
         connection.prepareStatement(
-            "SELECT i.id, i.name, i.amount, i.percentage, i.cost, it.name FROM masaca.ingredient i INNER JOIN masaca.ingredient_type it ON i.type_id = it.id WHERE i.recipe_id = ?"
+            "SELECT i.id, i.name, i.amount, i.percentage, i.cost, it.name, i.number FROM masaca.ingredient i INNER JOIN masaca.ingredient_type it ON i.type_id = it.id WHERE i.recipe_id = ? ORDER BY i.number"
         ).apply {
             setInt(1, recipeId)
         }.executeQuery().let {
@@ -70,7 +71,8 @@ class Repository(private val connection: Connection) {
                         percentage = it.getBigDecimal(4),
                         cost = it.getBigDecimal(5),
                         type = IngredientType.valueOf(it.getString(6)),
-                        recipeId = recipeId
+                        recipeId = recipeId,
+                        number = it.getInt(7)
                     )
                 )
             }

@@ -3,7 +3,7 @@ package masaca.backend.domain.procedure
 import com.fasterxml.jackson.annotation.*
 import java.time.*
 
-@JsonIgnoreProperties("id", "recipeId")
+@JsonIgnoreProperties("recipeId")
 data class Procedure (
     val id: Int? = null,
     val recipeId: Int,

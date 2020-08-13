@@ -11,5 +11,6 @@ data class Ingredient (
     var percentage: BigDecimal,
     var cost: BigDecimal,
     var type: IngredientType,
+    var number: Int,
     val recipeId: Int? = null
 )
