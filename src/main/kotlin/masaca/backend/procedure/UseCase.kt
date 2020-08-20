@@ -29,7 +29,7 @@ object UseCase {
             val r = Repository(it)
             val step = ProcedureStep.valueOf(request.step)
 
-            if (step != ProcedureStep.OTHER) {
+            if (step != ProcedureStep.OTHER && step != ProcedureStep.STRETCH_AND_FOLD) {
                 val procedure = r.getProcedure(request.procedureId)
                 if (procedure.stepLogs.any { sl -> sl.step == step })
                     throw MasacaValidationError("Step already exists")
